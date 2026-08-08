@@ -6,6 +6,13 @@ Flexprice Revenue Twin is a production-quality MVP for an AI-powered pricing int
 
 ---
 
+## Demo Video
+
+Check out the product walkthrough video of the Flexprice Revenue Twin platform on YouTube:
+👉 **[Watch the Demo Video](https://youtu.be/wXel1RY5sGI?si=G3yGq1sIDcRx08tc)**
+
+---
+
 ## The Problem
 
 AI monetization is uniquely challenging:
