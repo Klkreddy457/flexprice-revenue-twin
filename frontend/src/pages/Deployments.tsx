@@ -3,16 +3,11 @@ import { api } from '../services/api';
 import type { SimulationResult, FlexpriceDeployment, IngestionStreamLog, IntegrationStatus, ProposedPricing } from '../types';
 import { 
   CloudLightning, 
-  Settings, 
   Play, 
   RefreshCw, 
   Terminal, 
   CheckCircle2, 
-  AlertCircle,
-  FileCode,
-  Loader2,
-  ChevronRight,
-  Info
+  Loader2
 } from 'lucide-react';
 
 interface DeploymentsProps {

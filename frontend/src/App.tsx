@@ -9,7 +9,6 @@ import { Deployments } from './pages/Deployments';
 import { 
   Workflow, 
   Users, 
-  Cpu, 
   Sparkles, 
   CloudLightning, 
   LayoutDashboard, 

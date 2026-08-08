@@ -1,21 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { api } from '../services/api';
 import type { CustomerImpact, ProposedPricing } from '../types';
 import { 
   Search, 
   X, 
   AlertOctagon, 
-  HelpCircle, 
   Cpu, 
-  DollarSign, 
   Database, 
   Clock, 
   BookOpen, 
   Zap, 
-  TrendingUp,
   Percent,
   CheckCircle2,
-  AlertTriangle,
   Loader2
 } from 'lucide-react';
 
@@ -28,8 +24,6 @@ export const Customers: React.FC<CustomersProps> = ({ proposed, simResult }) => 
   const [searchTerm, setSearchTerm] = useState('');
   const [segmentFilter, setSegmentFilter] = useState<string>('all');
   const [riskFilter, setRiskFilter] = useState<string>('all');
-  const [selectedCustomerId, setSelectedCustomerId] = useState<string | null>(null);
-  
   // Drawer state
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [drawerLoading, setDrawerLoading] = useState(false);
@@ -40,7 +34,6 @@ export const Customers: React.FC<CustomersProps> = ({ proposed, simResult }) => 
   const impacts: CustomerImpact[] = simResult?.impacts || [];
 
   const handleOpenDrawer = async (customerId: string) => {
-    setSelectedCustomerId(customerId);
     setDrawerOpen(true);
     setDrawerLoading(true);
     setDrawerError(null);
@@ -57,7 +50,6 @@ export const Customers: React.FC<CustomersProps> = ({ proposed, simResult }) => 
 
   const handleCloseDrawer = () => {
     setDrawerOpen(false);
-    setSelectedCustomerId(null);
     setDrawerData(null);
   };
 

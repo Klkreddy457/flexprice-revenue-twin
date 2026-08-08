@@ -3,7 +3,6 @@ import { api } from '../services/api';
 import { 
   Users, 
   Cpu, 
-  DollarSign, 
   Layers, 
   TrendingUp, 
   ArrowRight,
@@ -19,8 +18,7 @@ import {
   ResponsiveContainer,
   PieChart,
   Pie,
-  Cell,
-  Legend
+  Cell
 } from 'recharts';
 
 interface OverviewProps {
@@ -199,7 +197,7 @@ export const Overview: React.FC<OverviewProps> = ({ onNavigate }) => {
                   paddingAngle={5}
                   dataKey="value"
                 >
-                  {segmentData.map((entry, index) => (
+                  {segmentData.map((_, index) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>

@@ -5,10 +5,7 @@ import {
   Sparkles, 
   Activity, 
   AlertTriangle, 
-  TrendingUp, 
-  TrendingDown, 
   CheckCircle,
-  HelpCircle,
   Loader2,
   AlertCircle
 } from 'lucide-react';

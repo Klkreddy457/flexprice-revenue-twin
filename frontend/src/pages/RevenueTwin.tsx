@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { api } from '../services/api';
 import type { SimulationResult, ProposedPricing } from '../types';
 import { 
-  DollarSign, 
   TrendingDown, 
   TrendingUp, 
   AlertTriangle,
