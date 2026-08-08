@@ -1,15 +1,15 @@
+import os
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-from app.core.config import settings
 
-# If using SQLite, we need connect_args for multithreading
-is_sqlite = settings.DATABASE_URL.startswith("sqlite")
-connect_args = {"check_same_thread": False} if is_sqlite else {}
+DATABASE_URL = os.getenv("DATABASE_URL")
+if not DATABASE_URL:
+    raise RuntimeError("DATABASE_URL is not configured")
 
 engine = create_engine(
-    settings.DATABASE_URL,
-    connect_args=connect_args
+    DATABASE_URL,
+    pool_pre_ping=True,
 )
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)

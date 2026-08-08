@@ -13,14 +13,7 @@ from app.api import simulations, customers, usage, ai, flexprice
 # Initialize database tables
 Base.metadata.create_all(bind=engine)
 
-# Auto-seed the database if empty on startup
-db = SessionLocal()
-try:
-    if db.query(Customer).count() == 0:
-        print("Database is empty. Auto-seeding initial dataset...")
-        seed_data(db)
-finally:
-    db.close()
+
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
