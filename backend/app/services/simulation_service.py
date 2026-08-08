@@ -258,51 +258,57 @@ def run_pricing_simulation(
     }
 
     if persist:
-        # 11. Save Simulation and Results to Database
-        sim_obj = Simulation(
-            id=simulation_id,
-            name=simulation_name,
-            current_pricing_id=current_pricing_id,
-            proposed_pricing_data={
-                "base_price": proposed_base_price,
-                "included_units": proposed_included_units,
-                "overage_price": proposed_overage_price,
-                "pricing_metric": pricing_metric
-            },
-            created_at=results["created_at"]
-        )
-        db.add(sim_obj)
-
-        # Save summary result
-        # Convert created_at and other datetimes to ISO strings for JSON serialization
-        summary_to_save = results.copy()
-        summary_to_save.pop("impacts") # Don't store impacts list in summary JSON to keep DB small
-        summary_to_save["created_at"] = summary_to_save["created_at"].isoformat()
-        
-        result_obj = SimulationResult(
-            id=f"res_{uuid.uuid4().hex[:8]}",
-            simulation_id=simulation_id,
-            summary_data=summary_to_save,
-            status="completed",
-            created_at=results["created_at"]
-        )
-        db.add(result_obj)
-
-        # Save customer impacts bulk
-        impacts_to_db = [
-            CustomerImpact(
-                id=f"imp_{uuid.uuid4().hex[:8]}",
-                simulation_id=simulation_id,
-                customer_id=imp["customer_id"],
-                current_bill=imp["current_bill"],
-                proposed_bill=imp["proposed_bill"],
-                bill_change=imp["bill_change"],
-                risk_level=imp["risk_level"]
+        # 11. Save Simulation and Results to Database inside a single transaction
+        try:
+            sim_obj = Simulation(
+                id=simulation_id,
+                name=simulation_name,
+                current_pricing_id=current_pricing_id,
+                proposed_pricing_data={
+                    "base_price": proposed_base_price,
+                    "included_units": proposed_included_units,
+                    "overage_price": proposed_overage_price,
+                    "pricing_metric": pricing_metric
+                },
+                created_at=results["created_at"]
             )
-            for imp in results["impacts"]
-        ]
-        db.add_all(impacts_to_db)
-        db.commit()
+            db.add(sim_obj)
+            db.flush()  # Ensure Simulation is inserted before dependent records to satisfy foreign key constraints
+
+            # Save summary result
+            # Convert created_at and other datetimes to ISO strings for JSON serialization
+            summary_to_save = results.copy()
+            summary_to_save.pop("impacts") # Don't store impacts list in summary JSON to keep DB small
+            summary_to_save["created_at"] = summary_to_save["created_at"].isoformat()
+            
+            result_obj = SimulationResult(
+                id=f"res_{uuid.uuid4().hex[:8]}",
+                simulation_id=simulation_id,
+                summary_data=summary_to_save,
+                status="completed",
+                created_at=results["created_at"]
+            )
+            db.add(result_obj)
+            db.flush()  # Ensure SimulationResult is inserted only after Simulation exists
+
+            # Save customer impacts bulk
+            impacts_to_db = [
+                CustomerImpact(
+                    id=f"imp_{uuid.uuid4().hex[:8]}",
+                    simulation_id=simulation_id,
+                    customer_id=imp["customer_id"],
+                    current_bill=imp["current_bill"],
+                    proposed_bill=imp["proposed_bill"],
+                    bill_change=imp["bill_change"],
+                    risk_level=imp["risk_level"]
+                )
+                for imp in results["impacts"]
+            ]
+            db.add_all(impacts_to_db)
+            db.commit()
+        except Exception as e:
+            db.rollback()
+            raise e
 
     return results
 
